@@ -23,7 +23,7 @@ class Device {
 				Button* next;
 				Button* prev;
 		};
-		Button* but_list;
+		Button* but_head;
 		char* dname;
 
 };
@@ -33,6 +33,7 @@ class Dlist {
 	public:
 		Dlist() : dev_head(nullptr) {};
 		void addDevice(char* name);
+		void addButton(char* name, decode_results res);
 		Device* findDevice(char* name);
 	private:
 		Device* dev_head;
