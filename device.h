@@ -8,7 +8,7 @@ class Device {
 	public:
 		Device() : but_head(nullptr), next(nullptr), prev(nullptr) {};
 		Device(char* name,Device* n, Device* p) : dname(name), next(n), prev(p), but_head(nullptr) {};
-		void add_button(char* name,decode_results res);
+		bool add_button(char* name,decode_results res);
 		char* get_name();
 		decode_results findButton(char* name);
 		Device* next;
@@ -32,8 +32,7 @@ class Device {
 class Dlist {
 	public:
 		Dlist() : dev_head(nullptr) {};
-		void addDevice(char* name);
-		void addButton(char* name, decode_results res);
+		bool addDevice(char* name);
 		Device* findDevice(char* name);
 	private:
 		Device* dev_head;
