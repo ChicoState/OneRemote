@@ -1,4 +1,6 @@
 
+
+
 /* IRremoteESP8266: IRsendDemo - demonstrates sending IR codes with IRsend.
  *
  * Version 1.1 January, 2019
@@ -56,11 +58,9 @@
 #include <ir_Trotec.h>
 #include <ir_Vestel.h>
 #include <ir_Whirlpool.h>
-
-/*
 #include <device.h>
+
 Dlist connector;
-*/
 
 const uint16_t kIrLed = 4;  // ESP8266 GPIO pin to use. Recommended: 4 (D2).
 const uint16_t recvButtonPin = 13;
@@ -75,6 +75,7 @@ int sendButtonState = 0;
 int rune = 0;
 IRsend irsend(kIrLed);  // Set the GPIO to be used to sending the message.
 void send_sig();
+void recv_sig();
 
 void setup() {
   pinMode(recvButtonPin, INPUT);
@@ -91,35 +92,47 @@ void setup() {
 void loop() {
   recvButtonState = digitalRead(recvButtonPin);
   sendButtonState = digitalRead(sendButtonPin);
-  if(recvButtonState == LOW) {
-    digitalWrite(redPin,HIGH);
-    while(!(recv.decode(&results))) {
-      delay(100);
-    }
-    digitalWrite(redPin,LOW);
-    serialPrintUint64(results.value,HEX);
-    Serial.println("");
-    recv.resume();
+  if(recvButtonState == LOW) 
+  {
+    connector.addDevice("Fan");
+    recv_sig();
+   
   }
   if(sendButtonState == LOW)
   {
-    send_sig();
+    send_sig("Fan","Power");
+    //send_sig();
   }
 
 }
 
-/*
+void recv_sig()
+{
+  digitalWrite(redPin,HIGH);
+  while(!(recv.decode(&results))) {
+    delay(100);
+  }
+  connector.findDevice("Fan")->add_button("Power",results);
+  digitalWrite(redPin,LOW);
+  serialPrintUint64(results.value,HEX);
+  Serial.println("");
+  recv.resume();
+}
+
+
 void send_sig(char* dname,char* bname)
 {
   Device* temp = connector.findDevice(dname);
-  decode_results res = temp->findButton(bname);
+  decode_results res = *(temp->findButton(bname));
   uint64_t data = res.value;
   uint64_t nbits = res.bits;
-  */
+  Serial.println(temp->get_name());
+  /*
 void send_sig()
 {
   uint64_t data = results.value;
   uint64_t nbits = results.bits;
+  */
   switch(results.decode_type) {
     case NEC:
     case NEC_LIKE:
