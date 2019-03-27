@@ -1,6 +1,4 @@
 
-
-
 /* IRremoteESP8266: IRsendDemo - demonstrates sending IR codes with IRsend.
  *
  * Version 1.1 January, 2019
@@ -94,7 +92,7 @@ void loop() {
   sendButtonState = digitalRead(sendButtonPin);
   if(recvButtonState == LOW) 
   {
-    connector.addDevice("Fan");
+    //connector.addDevice("Fan");
     recv_sig();
    
   }
@@ -112,6 +110,7 @@ void recv_sig()
   while(!(recv.decode(&results))) {
     delay(100);
   }
+  connector.addDevice("Fan",&results);
   connector.findDevice("Fan")->add_button("Power",results);
   digitalWrite(redPin,LOW);
   serialPrintUint64(results.value,HEX);
@@ -123,7 +122,8 @@ void recv_sig()
 void send_sig(char* dname,char* bname)
 {
   Device* temp = connector.findDevice(dname);
-  decode_results res = *(temp->findButton(bname));
+  //decode_results res = *(temp->findButton(bname));
+  decode_results res = temp->findButton(bname);
   uint64_t data = res.value;
   uint64_t nbits = res.bits;
   Serial.println(temp->get_name());
@@ -133,7 +133,7 @@ void send_sig()
   uint64_t data = results.value;
   uint64_t nbits = results.bits;
   */
-  switch(results.decode_type) {
+  switch(res.decode_type) {
     case NEC:
     case NEC_LIKE:
     {
