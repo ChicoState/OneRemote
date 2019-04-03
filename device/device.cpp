@@ -72,7 +72,7 @@ bool Dlist::addDevice(char* name, decode_results *res)
 		}	
 		else
 		{
-			dev_head->prev = new Device(name,dev_head,nullptr);
+			dev_head->prev = new Device(name,res, dev_head,nullptr);
 			dev_head = dev_head->prev;
 		}
 		return true;
