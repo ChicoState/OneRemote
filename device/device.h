@@ -7,7 +7,7 @@
 class Device {
 	public:
 		Device() : but_head(nullptr), next(nullptr), prev(nullptr) {};
-		Device(char* name,Device* n, Device* p) : dname(name), next(n), prev(p), but_head(nullptr) {};
+		Device(char* name,decode_results* dec, Device* n, Device* p) : dname(name),but_head(new Button("Power",dec)), next(n), prev(p) {};
 		bool add_button(char* name,decode_results res);
 		bool searchButton(char *name);
 		char* get_name();
@@ -33,8 +33,10 @@ class Device {
 		};
 	public:
 		Device(char *name,decode_results* dec){
-			but_head= new Button(name,dec);
+			but_head= new Button("Power",dec);
 			dname =name; 
+			next = nullptr;
+			prev = nullptr;
 			}
 	private: 
 		Button* but_head;
