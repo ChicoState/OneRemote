@@ -1,4 +1,5 @@
 #include <IRrecv.h>
+#include <rooms.h>
 
 #ifndef DEVICE_H
 #define DEVICE_H
@@ -47,12 +48,15 @@ class Device {
 
 class Dlist {
 	public:
-		Dlist() : dev_head(nullptr) {};
+		Dlist() : dev_head(nullptr), room_head(nullptr) {};
 		bool addDevice(char* name, decode_results *res);
 		Device* findDevice(char* name);
 		bool searchDevice(char *name);
+		bool searchRoom(char *name);
+		bool addRoom(char* name);
 	private:
 		Device* dev_head;
+		Room* room_head; //points to list of rooms
 
 };
 
