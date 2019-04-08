@@ -80,6 +80,54 @@ bool Dlist::addDevice(char* name, decode_results *res)
 	return false;
 }
 
+/*
+ * Dlist::searchRoom
+ *
+ * This function searches through the rooms already created checking if the room passed in 
+ * already exists.
+ *
+ * @Param: name The name of the room searching for.
+ *
+ * @ Return: True if room exists, False if room doesn't exist
+ */
+bool Dlist::searchRoom(char* name)
+{
+	Room* temp = room_head;
+	while(temp != nullptr)
+	{
+		if(temp->get_name() == name)
+			return true;
+	}
+	return false;
+}
+
+/*
+ * Dlist::addRoom
+ *
+ * This function adds a room to the list of rooms.
+ *
+ * @Param: name The name of the room to be added.
+ *
+ * @Return: True if room successfully added, False if not added
+ */
+bool Dlist::addRoom(char* name)
+{
+	if(searchRoom(name) == false)
+	{
+		if(room_head == nullptr)
+		{
+			room_head = new Room(name);
+		}
+		else
+		{
+			room_head->prev = new Room(name,room_head);
+			room_head = room_head->prev;
+		}
+		return true;
+	}
+	return false;
+}
+
 
 
 /*
@@ -169,7 +217,6 @@ bool Device::add_button(char* name, decode_results res)
 	}
 	return false;
 }
-
 
 
 
