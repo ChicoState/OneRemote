@@ -78,7 +78,7 @@ int but3_read = 0;
 int rune = 0;
 IRsend irsend(kIrLed);  // Set the GPIO to be used to sending the message.
 void send_sig();
-void recv_sig(decode_results &tmp);
+decode_results recv_sig();
 
 void setup() {
   pinMode(ButtonPin1,INPUT);
@@ -99,8 +99,7 @@ void loop() {
   if(ButtonState1 == LOW && but1_read == 0) 
   {
     Serial.println("But 1 Read");
-    decode_results temp;
-    recv_sig(temp);
+    decode_results temp = recv_sig();
     connector.addDevice("Fan",&temp);
     but1_read = 1;
     delay(75);
@@ -115,9 +114,8 @@ void loop() {
   else if(ButtonState2 == LOW && but2_read == 0) 
   {
     Serial.println("But 2 Read");
-    decode_results temp2;
-    recv_sig(temp2);
-    connector.findDevice("Fan")->add_button("Turn",temp2);
+    decode_results temp = recv_sig();
+    connector.findDevice("Fan")->add_button("Turn",temp);
     but2_read = 1;
     delay(75);
   }
@@ -130,9 +128,8 @@ void loop() {
   else if(ButtonState3 == LOW && but3_read == 0) 
   {
     Serial.println("Button 3 Read");
-    decode_results temp3;
-    recv_sig(temp3);
-    connector.addDevice("TV",&temp3);
+    decode_results temp = recv_sig();
+    connector.addDevice("TV",&temp);
     but3_read = 1;
     delay(75);
   }
@@ -146,17 +143,17 @@ void loop() {
 
 }
 
-void recv_sig(decode_results &tmp)
+decode_results recv_sig()
 {
-  //decode_results results;
-  while(!(recv.decode(&tmp))) {
+  decode_results results;
+  while(!(recv.decode(&results))) {
     delay(100);
   }
-  serialPrintUint64(tmp.value,HEX);
+  serialPrintUint64(results.value,HEX);
   Serial.println("");
   yield();
   recv.resume();
-  //return results;
+  return results;
 }
 
 
