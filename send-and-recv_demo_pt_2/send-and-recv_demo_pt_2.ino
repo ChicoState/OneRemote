@@ -63,24 +63,27 @@
 Dlist connector;
 
 const uint16_t kIrLed = 4;  // ESP8266 GPIO pin to use. Recommended: 4 (D2).
-const uint16_t recvButtonPin = 13;
-const uint16_t sendButtonPin = 16;
-const uint16_t redPin = 12;
+const uint16_t ButtonPin1 = 13;
+const uint16_t ButtonPin2 = 12;
+const uint16_t ButtonPin3 = 16;
 
 IRrecv recv(14);
-decode_results results;
 uint64_t stored_sig;
-int recvButtonState = 0;
-int sendButtonState = 0;
+int ButtonState1 = 0;
+int ButtonState2 = 0;
+int ButtonState3 = 0;
+int but1_read = 0;
+int but2_read = 0;
+int but3_read = 0;
 int rune = 0;
 IRsend irsend(kIrLed);  // Set the GPIO to be used to sending the message.
 void send_sig();
-void recv_sig();
+void recv_sig(decode_results &tmp);
 
 void setup() {
-  pinMode(recvButtonPin, INPUT);
-  pinMode(sendButtonPin,INPUT);
-  pinMode(redPin,OUTPUT);
+  pinMode(ButtonPin1,INPUT);
+  pinMode(ButtonPin2,INPUT);
+  pinMode(ButtonPin3,INPUT);
   irsend.begin();
   recv.enableIRIn();
   Serial.begin(115200, SERIAL_8N1, SERIAL_TX_ONLY);
@@ -90,51 +93,88 @@ void setup() {
 }
 
 void loop() {
-  recvButtonState = digitalRead(recvButtonPin);
-  sendButtonState = digitalRead(sendButtonPin);
-  if(recvButtonState == LOW) 
+  ButtonState1 = digitalRead(ButtonPin1);
+  ButtonState2 = digitalRead(ButtonPin2);
+  ButtonState3 = digitalRead(ButtonPin3);
+  if(ButtonState1 == LOW && but1_read == 0) 
   {
-    //connector.addDevice("Fan");
-    recv_sig();
+    Serial.println("But 1 Read");
+    decode_results temp;
+    recv_sig(temp);
+    connector.addDevice("Fan",&temp);
+    but1_read = 1;
+    delay(75);
    
   }
-  if(sendButtonState == LOW)
+  else if(ButtonState1 == LOW && but1_read != 0)
   {
+    Serial.println("But 1 Send");
     send_sig("Fan","Power");
-    //send_sig();
+    delay(75);
   }
+  else if(ButtonState2 == LOW && but2_read == 0) 
+  {
+    Serial.println("But 2 Read");
+    decode_results temp2;
+    recv_sig(temp2);
+    connector.findDevice("Fan")->add_button("Turn",temp2);
+    but2_read = 1;
+    delay(75);
+  }
+  else if(ButtonState2 == LOW && but2_read != 0)
+  {
+    Serial.println("But 2 Send");
+    send_sig("Fan","Turn");
+    delay(75);
+  }
+  else if(ButtonState3 == LOW && but3_read == 0) 
+  {
+    Serial.println("Button 3 Read");
+    decode_results temp3;
+    recv_sig(temp3);
+    connector.addDevice("TV",&temp3);
+    but3_read = 1;
+    delay(75);
+  }
+  else if(ButtonState3 == LOW && but3_read != 0)
+  {
+    Serial.println("Button 3 Send");
+    send_sig("TV","Power");
+    delay(75);
+  }  
+
 
 }
 
-void recv_sig()
+void recv_sig(decode_results &tmp)
 {
-  digitalWrite(redPin,HIGH);
-  while(!(recv.decode(&results))) {
+  //decode_results results;
+  while(!(recv.decode(&tmp))) {
     delay(100);
   }
-  connector.addDevice("Fan",&results);
-  connector.findDevice("Fan")->add_button("Power",results);
-  digitalWrite(redPin,LOW);
-  serialPrintUint64(results.value,HEX);
+  serialPrintUint64(tmp.value,HEX);
   Serial.println("");
+  yield();
   recv.resume();
+  //return results;
 }
 
 
 void send_sig(char* dname,char* bname)
 {
   Device* temp = connector.findDevice(dname);
-  //decode_results res = *(temp->findButton(bname));
   decode_results res = temp->findButton(bname);
   uint64_t data = res.value;
   uint64_t nbits = res.bits;
   Serial.println(temp->get_name());
-  /*
-void send_sig()
-{
-  uint64_t data = results.value;
-  uint64_t nbits = results.bits;
-  */
+  if(temp->searchButton(bname) == true)
+  {
+    Serial.println(bname);
+  }
+  else
+  {
+    Serial.println("ERROR: Button not found");
+  }
   switch(res.decode_type) {
     case NEC:
     case NEC_LIKE:
@@ -259,7 +299,7 @@ void send_sig()
       break;
     case SHARP:
       Serial.println("SHARP");
-      irsend.sendSharpRaw(irsend.encodeSharp(results.address,results.command), nbits);
+      irsend.sendSharpRaw(irsend.encodeSharp(res.address,res.command), nbits);
       break;
     case SHERWOOD:
       Serial.println("SHERWOOD");
