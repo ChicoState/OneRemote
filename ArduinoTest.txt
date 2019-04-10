@@ -1,0 +1,13 @@
+NAME:PANASONICTVREMOTE
+begin remote
+
+  name  AMP
+      begin codes
+          KEY_POWER                0x000000000000FDBB        #  Was: POWER
+          KEY_VOLUMEUP             0x0000000000000D4B        #  Was: VOL+
+          KEY_VOLUMEDOWN           0x0000000000004DCB        #  Was: VOL-
+          KEY_SLEEP                0x0000000000003D7B        #  Was: SLEEP
+          DISPLAY                  0x000000000000F17B
+      end codes
+
+end remote
