@@ -1,4 +1,5 @@
 
+
 /* IRremoteESP8266: IRsendDemo - demonstrates sending IR codes with IRsend.
  *
  * Version 1.1 January, 2019
@@ -57,6 +58,7 @@
 #include <ir_Vestel.h>
 #include <ir_Whirlpool.h>
 #include <device.h>
+#include <rooms.h>
 
 Dlist connector;
 
