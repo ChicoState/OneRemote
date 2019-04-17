@@ -54,9 +54,11 @@ class Dlist {
 		bool searchDevice(char *name);
 		bool searchRoom(char *name);
 		bool addRoom(char* name);
+		void addQA(char* dev, int spot = -1);
 	private:
 		Device* dev_head;
 		Room* room_head; //points to list of rooms
+		char* quickAccess[3];
 
 };
 
