@@ -128,6 +128,29 @@ bool Dlist::addRoom(char* name)
 	return false;
 }
 
+/*
+ * Dlist::addQA
+ *
+ * This function adds/changes a device located in the quick access array/menu.
+ *
+ * @Param: dev The name of the device to be added to the quickAccess array/menu
+ * @Param: spot The spot in the quickAccess array/menu to be swapped out. -1 if menu empty.
+ *
+ */
+void Dlist::addQA(char* dev, int spot)
+{
+	switch(spot)
+	{
+		case 0:
+		case 1:
+		case 2:
+			quickAccess[spot] = dev;
+			break;
+		default:
+			quickAccess[0] = dev;
+	}
+}
+
 
 
 /*
