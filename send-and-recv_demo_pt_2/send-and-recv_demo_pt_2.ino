@@ -72,18 +72,21 @@ uint64_t stored_sig;
 int ButtonState1 = 0;
 int ButtonState2 = 0;
 int ButtonState3 = 0;
-int but1_read = 0;
-int but2_read = 0;
-int but3_read = 0;
+int but1_read;
+int but2_read;
+int but3_read;
 int rune = 0;
 IRsend irsend(kIrLed);  // Set the GPIO to be used to sending the message.
-void send_sig();
+void send_sig(char* dname, char* bname);
 decode_results recv_sig();
 
 void setup() {
   pinMode(ButtonPin1,INPUT);
   pinMode(ButtonPin2,INPUT);
   pinMode(ButtonPin3,INPUT);
+  but1_read = 0;
+  but2_read = 0;
+  but3_read = 0;
   irsend.begin();
   recv.enableIRIn();
   Serial.begin(115200, SERIAL_8N1, SERIAL_TX_ONLY);
@@ -96,63 +99,72 @@ void loop() {
   ButtonState1 = digitalRead(ButtonPin1);
   ButtonState2 = digitalRead(ButtonPin2);
   ButtonState3 = digitalRead(ButtonPin3);
-  if(ButtonState1 == LOW && but1_read == 0) 
+  if(ButtonState1 == LOW) 
   {
-    Serial.println("But 1 Read");
-    decode_results temp = recv_sig();
-    connector.addDevice("Fan",&temp);
-    but1_read = 1;
-    delay(75);
-   
+    if(but1_read == 0)
+    {
+      Serial.println("But 1 Read");
+      decode_results temp = recv_sig();
+      connector.addDevice("Fan",&temp);
+      but1_read = 1;
+      delay(250);
+    }
+    else
+    {
+      Serial.println("But 1 Send");
+      send_sig("Fan","Power");
+      delay(250);
+    }
   }
-  else if(ButtonState1 == LOW && but1_read != 0)
+  if(ButtonState2 == LOW) 
   {
-    Serial.println("But 1 Send");
-    send_sig("Fan","Power");
-    delay(75);
+    if(but2_read == 0)
+    {
+      Serial.println("But 2 Read");
+      decode_results temp = recv_sig();
+      connector.findDevice("Fan")->add_button("Turn",temp);
+      but2_read = 1;
+      delay(250);
+    }
+    else
+    {
+      Serial.println("But 2 Send");
+      send_sig("Fan","Turn");
+      delay(250);
+    }
   }
-  else if(ButtonState2 == LOW && but2_read == 0) 
+  if(ButtonState3 == LOW) 
   {
-    Serial.println("But 2 Read");
-    decode_results temp = recv_sig();
-    connector.findDevice("Fan")->add_button("Turn",temp);
-    but2_read = 1;
-    delay(75);
+    if(but3_read == 0)
+    {
+      Serial.println("Button 3 Read");
+      decode_results temp = recv_sig();
+      connector.addDevice("TV",&temp);
+      but3_read = 1;
+      delay(250);
+    }
+    else
+    {
+      Serial.println("Button 3 Send");
+      send_sig("TV","Power");
+      delay(250);
+    }  
   }
-  else if(ButtonState2 == LOW && but2_read != 0)
-  {
-    Serial.println("But 2 Send");
-    send_sig("Fan","Turn");
-    delay(75);
-  }
-  else if(ButtonState3 == LOW && but3_read == 0) 
-  {
-    Serial.println("Button 3 Read");
-    decode_results temp = recv_sig();
-    connector.addDevice("TV",&temp);
-    but3_read = 1;
-    delay(75);
-  }
-  else if(ButtonState3 == LOW && but3_read != 0)
-  {
-    Serial.println("Button 3 Send");
-    send_sig("TV","Power");
-    delay(75);
-  }  
 
 
 }
 
 decode_results recv_sig()
 {
+  recv.resume();
   decode_results results;
+  delay(100);
   while(!(recv.decode(&results))) {
     delay(100);
   }
   serialPrintUint64(results.value,HEX);
   Serial.println("");
-  yield();
-  recv.resume();
+  delay(100);
   return results;
 }
 
@@ -321,7 +333,7 @@ void send_sig(char* dname,char* bname)
       break;
     
   }
-  delay(650);
+  delay(100);
 
 
 }
