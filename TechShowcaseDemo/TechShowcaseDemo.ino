@@ -306,11 +306,13 @@ int deviceControl(String command) {
 			serialPrintUint64(results.value, HEX);
 			Serial.println("");
 			delay(400);
+      break;
 			//Case 1 handles "SEND" to send learned signal
 		case 1:
 			Serial.println("But Send");
 			send_sig();
 			delay(400);
+      break;
 		case 2:
 			irsend.sendNEC(power_button_fan,32); //Connor's Fan Power
 			break;
