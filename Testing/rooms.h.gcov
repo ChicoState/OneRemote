@@ -1,0 +1,31 @@
+        -:    0:Source:../device/rooms.h
+        -:    0:Graph:device.gcno
+        -:    0:Data:device.gcda
+        -:    0:Runs:8
+        -:    0:Programs:4
+        -:    1:
+        -:    2:#ifndef ROOMS_H
+        -:    3:#define ROOMS_H
+        -:    4:
+        -:    5:class Room {
+        -:    6:	public:
+        -:    7:		Room() : next(nullptr), prev(nullptr), num_devices(0) {};
+function _ZN4RoomC2EPc called 40 returned 100% blocks executed 100%
+       40:    8:		Room(char* name) : next(nullptr), prev(nullptr), rname(name) {};
+function _ZN4RoomC2EPcPS_ called 16 returned 100% blocks executed 100%
+       16:    9:		Room(char* name,Room* next) : next(next), prev(nullptr),rname(name), num_devices(0) {};
+        -:   10:		Room* next;
+        -:   11:		Room* prev;
+        -:   12:		char* rname;
+        -:   13:		char* get_name();
+        -:   14:		bool addDevicetoRoom(char* name);
+        -:   15:		bool device_check(char* name);
+        -:   16:	private:
+        -:   17:		//char* rname;
+        -:   18:		char* devices[100];
+        -:   19:		int num_devices;
+        -:   20:		
+        -:   21:
+        -:   22:};
+        -:   23:
+        -:   24:#endif

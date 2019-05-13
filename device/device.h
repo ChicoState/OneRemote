@@ -1,5 +1,6 @@
-#include <IRrecv.h>
-#include <rooms.h>
+#include "../src/IRrecv.h"
+#include "rooms.h"
+#include <stdio.h>
 
 #ifndef DEVICE_H
 #define DEVICE_H
@@ -7,8 +8,8 @@
 
 class Device {
 	public:
-		Device() : but_head(nullptr), next(nullptr), prev(nullptr) {};
-		Device(char* name,decode_results* dec, Device* n, Device* p) : dname(name),but_head(new Button("Power",dec)), next(n), prev(p) {};
+		Device() : next(nullptr), prev(nullptr),but_head(nullptr) {};
+		Device(char* name,decode_results* dec, Device* n, Device* p) : next(n), prev(p), but_head(new Button("Power",dec)),dname(name) {};
 		bool add_button(char* name,decode_results res);
 		bool searchButton(char *name);
 		char* get_name();
@@ -54,7 +55,7 @@ class Dlist {
 		bool searchDevice(char *name);
 		bool searchRoom(char *name);
 		bool addRoom(char* name);
-		void addQA(char* dev, int spot = -1);
+		bool addQA(char* dev, int spot = -1);
 	private:
 		Device* dev_head;
 		Room* room_head; //points to list of rooms

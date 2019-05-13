@@ -1,4 +1,5 @@
-#include <device.h>
+#include "device.h"
+#include "rooms.h"
 
 
 /*
@@ -95,8 +96,9 @@ bool Dlist::searchRoom(char* name)
 	Room* temp = room_head;
 	while(temp != nullptr)
 	{
-		if(temp->get_name() == name)
+		if(temp->rname == name) //changed temp->get_name to temp->rname, moved name to public in rooms.h
 			return true;
+		temp = temp->next;
 	}
 	return false;
 }
@@ -134,10 +136,11 @@ bool Dlist::addRoom(char* name)
  * This function adds/changes a device located in the quick access array/menu.
  *
  * @Param: dev The name of the device to be added to the quickAccess array/menu
- * @Param: spot The spot in the quickAccess array/menu to be swapped out. -1 if menu empty.
+ * @Param: spot The spot in the quickAccess array/menu to be swapped out.
  *
+ * 
  */
-void Dlist::addQA(char* dev, int spot)
+bool Dlist::addQA(char* dev, int spot)
 {
 	switch(spot)
 	{
@@ -147,8 +150,9 @@ void Dlist::addQA(char* dev, int spot)
 			quickAccess[spot] = dev;
 			break;
 		default:
-			quickAccess[0] = dev;
+			return false;
 	}
+	return true;
 }
 
 

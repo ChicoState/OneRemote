@@ -1,0 +1,330 @@
+        -:    0:Source:../device/device.cpp
+        -:    0:Graph:device.gcno
+        -:    0:Data:device.gcda
+        -:    0:Runs:8
+        -:    0:Programs:4
+        -:    1:#include "device.h"
+        -:    2:#include "rooms.h"
+        -:    3:
+        -:    4:
+        -:    5:/*
+        -:    6: * Dlist::findDevice
+        -:    7: *
+        -:    8: * This function searches through the list of devices that have been added and
+        -:    9: * compares each name with the name provided. If a match is found, the pointer
+        -:   10: * to the Device is return. If there is no match, nullptr is returned.
+        -:   11: *
+        -:   12: * @param name: name of Device looking for
+        -:   13: *
+        -:   14: * @Return: Pointer to Device in list or nullptr if not there
+        -:   15: *
+        -:   16: */
+function _ZN5Dlist10findDeviceEPc called 95 returned 100% blocks executed 100%
+       95:   17:Device* Dlist::findDevice(char* name)
+        -:   18:{
+       95:   19:	Device* cur = dev_head;
+        -:   20:
+      198:   21:	while(cur != nullptr)
+branch  0 taken 92%
+branch  1 taken 8% (fallthrough)
+        -:   22:	{
+       95:   23:		if(name == cur->get_name())
+call    0 returned 100%
+branch  1 taken 92% (fallthrough)
+branch  2 taken 8%
+        -:   24:		{
+       87:   25:			return cur;
+        -:   26:		}
+        8:   27:		cur = cur->next;
+        -:   28:	}
+        8:   29:	return nullptr;
+        -:   30:
+        -:   31:}
+        -:   32:/**
+        -:   33: *DList::searchDevice
+        -:   34: *
+        -:   35: *This function locates if a device exists in the list or not. 
+        -:   36: *
+        -:   37: *Name to search for
+        -:   38: **/
+function _ZN5Dlist12searchDeviceEPc called 132 returned 100% blocks executed 100%
+      132:   39:bool Dlist::searchDevice(char * name){
+      132:   40:	Device * dev = dev_head;
+        -:   41:	
+      280:   42:	while(dev != nullptr)
+branch  0 taken 22%
+branch  1 taken 78% (fallthrough)
+        -:   43:	{
+       32:   44:		if(name == dev->get_name())
+call    0 returned 100%
+branch  1 taken 50% (fallthrough)
+branch  2 taken 50%
+        -:   45:		{
+       16:   46:			return true;
+        -:   47:		}
+       16:   48:		dev = dev->next;
+        -:   49:	}
+      116:   50:	return false;
+        -:   51:
+        -:   52:}
+        -:   53:
+        -:   54:/*
+        -:   55: * Dlist::addDevice
+        -:   56: *
+        -:   57: * This function adds a new device to the list of devices.
+        -:   58: * If there are no devices in the list, the device is just added in.
+        -:   59: * If the list is not empty then the device is added to the front of the list
+        -:   60: *
+        -:   61: * @param name: Name of the device being added
+        -:   62: *
+        -:   63: * @Return: True if button added successfully, False if button already exists
+        -:   64: *
+        -:   65: */
+function _ZN5Dlist9addDeviceEPcP14decode_results called 116 returned 100% blocks executed 81%
+      116:   66:bool Dlist::addDevice(char* name, decode_results *res)
+        -:   67:{
+      116:   68:	if(searchDevice(name) == false)
+call    0 returned 100%
+branch  1 taken 93% (fallthrough)
+branch  2 taken 7%
+        -:   69:	{
+      108:   70:		if(dev_head == nullptr)
+branch  0 taken 85% (fallthrough)
+branch  1 taken 15%
+        -:   71:		{
+       92:   72:			dev_head = new Device(name,res);
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 never executed
+call    5 never executed
+        -:   73:		}	
+        -:   74:		else
+        -:   75:		{
+       16:   76:			dev_head->prev = new Device(name,res, dev_head,nullptr); // added 'res' as parameter
+call    0 returned 100%
+call    1 returned 100%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0% (throw)
+call    4 never executed
+       16:   77:			dev_head = dev_head->prev;
+        -:   78:		}
+      108:   79:		return true;
+        -:   80:	}
+        8:   81:	return false;
+        -:   82:}
+        -:   83:
+        -:   84:/*
+        -:   85: * Dlist::searchRoom
+        -:   86: *
+        -:   87: * This function searches through the rooms already created checking if the room passed in 
+        -:   88: * already exists.
+        -:   89: *
+        -:   90: * @Param: name The name of the room searching for.
+        -:   91: *
+        -:   92: * @ Return: True if room exists, False if room doesn't exist
+        -:   93: */
+function _ZN5Dlist10searchRoomEPc called 88 returned 100% blocks executed 100%
+       88:   94:bool Dlist::searchRoom(char* name)
+        -:   95:{
+       88:   96:	Room* temp = room_head;
+      200:   97:	while(temp != nullptr)
+branch  0 taken 43%
+branch  1 taken 57% (fallthrough)
+        -:   98:	{
+       48:   99:		if(temp->rname == name) //changed temp->get_name to temp->rname, moved name to public in rooms.h
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+       24:  100:			return true;
+       24:  101:		temp = temp->next;
+        -:  102:	}
+       64:  103:	return false;
+        -:  104:}
+        -:  105:
+        -:  106:/*
+        -:  107: * Dlist::addRoom
+        -:  108: *
+        -:  109: * This function adds a room to the list of rooms.
+        -:  110: *
+        -:  111: * @Param: name The name of the room to be added.
+        -:  112: *
+        -:  113: * @Return: True if room successfully added, False if not added
+        -:  114: */
+function _ZN5Dlist7addRoomEPc called 72 returned 100% blocks executed 100%
+       72:  115:bool Dlist::addRoom(char* name)
+        -:  116:{
+       72:  117:	if(searchRoom(name) == false)
+call    0 returned 100%
+branch  1 taken 78% (fallthrough)
+branch  2 taken 22%
+        -:  118:	{
+       56:  119:		if(room_head == nullptr)
+branch  0 taken 71% (fallthrough)
+branch  1 taken 29%
+        -:  120:		{
+       40:  121:			room_head = new Room(name);
+call    0 returned 100%
+call    1 returned 100%
+        -:  122:		}
+        -:  123:		else
+        -:  124:		{
+       16:  125:			room_head->prev = new Room(name,room_head);
+call    0 returned 100%
+call    1 returned 100%
+       16:  126:			room_head = room_head->prev;
+        -:  127:		}
+       56:  128:		return true;
+        -:  129:	}
+       16:  130:	return false;
+        -:  131:}
+        -:  132:
+        -:  133:/*
+        -:  134: * Dlist::addQA
+        -:  135: *
+        -:  136: * This function adds/changes a device located in the quick access array/menu.
+        -:  137: *
+        -:  138: * @Param: dev The name of the device to be added to the quickAccess array/menu
+        -:  139: * @Param: spot The spot in the quickAccess array/menu to be swapped out.
+        -:  140: *
+        -:  141: * 
+        -:  142: */
+function _ZN5Dlist5addQAEPci called 56 returned 100% blocks executed 100%
+       56:  143:bool Dlist::addQA(char* dev, int spot)
+        -:  144:{
+       56:  145:	switch(spot)
+branch  0 taken 86%
+branch  1 taken 14%
+        -:  146:	{
+        -:  147:		case 0:
+        -:  148:		case 1:
+        -:  149:		case 2:
+       48:  150:			quickAccess[spot] = dev;
+       48:  151:			break;
+        -:  152:		default:
+        8:  153:			return false;
+        -:  154:	}
+       48:  155:	return true;
+        -:  156:}
+        -:  157:
+        -:  158:
+        -:  159:
+        -:  160:/*
+        -:  161: * Device::get_name
+        -:  162: *
+        -:  163: * @Return: Name of device
+        -:  164: *
+        -:  165: */
+function _ZN6Device8get_nameEv called 135 returned 100% blocks executed 100%
+      135:  166:char* Device::get_name()
+        -:  167:{
+      135:  168:	return dname;
+        -:  169:}
+        -:  170:
+        -:  171:/*
+        -:  172: * Device::findButton
+        -:  173: *
+        -:  174: * This function searches through the list of buttons that have been added and
+        -:  175: * compares each name with the name provided. If a match is found, the decoded
+        -:  176: * results are returned. If there is no match, nullptr is returned.
+        -:  177: *
+        -:  178: * @param name: name of Button looking for
+        -:  179: *
+        -:  180: * @Return: Decoded results of button or nullptr if not there
+        -:  181: *
+        -:  182: */
+function _ZN6Device10findButtonEPc called 0 returned 0% blocks executed 0%
+    #####:  183:decode_results Device::findButton(char* name)
+        -:  184:{
+        -:  185:	//empty decode_results to allow for null return. 
+        -:  186:	decode_results x; 
+        -:  187:
+    #####:  188:	Button* cur = but_head;
+        -:  189:
+    #####:  190:	while(cur != nullptr)
+branch  0 never executed
+branch  1 never executed
+        -:  191:	{
+    #####:  192:		if(name == cur->bname)
+branch  0 never executed
+branch  1 never executed
+        -:  193:		{
+    #####:  194:			return cur->results;
+        -:  195:		}
+    #####:  196:		cur = cur->next;
+        -:  197:	}
+    #####:  198:	return x; /* CHANGE and CHANGE DESCRIPTION*/
+        -:  199:
+        -:  200:}
+        -:  201:/**
+        -:  202: *
+        -:  203: *Device::SearchButton
+        -:  204: *
+        -:  205: *Taking the argument of a name, the function searches the list to find if the object exists. 
+        -:  206: **/
+function _ZN6Device12searchButtonEPc called 63 returned 100% blocks executed 100%
+       63:  207:bool Device:: searchButton(char *name){
+       63:  208:	Button * but =but_head;
+      191:  209:	while(but!= nullptr){
+branch  0 taken 63%
+branch  1 taken 38% (fallthrough)
+       80:  210:		if(name == but->bname){
+branch  0 taken 19% (fallthrough)
+branch  1 taken 81%
+       15:  211:			return true;
+        -:  212:			}
+       65:  213:		but=but->next;
+        -:  214:		}
+       48:  215:	return false;
+        -:  216:	}
+        -:  217:/*
+        -:  218: * Device::add_button
+        -:  219: *
+        -:  220: * This function adds a new button to the list of buttons for the device.
+        -:  221: * If there are no buttons in the list, the button is just added in.
+        -:  222: * If the list is not empty then the button is added to the front of the list
+        -:  223: *
+        -:  224: * @param name: Name of the button being added
+        -:  225: * @param res: the decoded data for the button
+        -:  226: *
+        -:  227: * @Return: True if button successfully added, False if button already exists
+        -:  228: *
+        -:  229: */
+function _ZN6Device10add_buttonEPc14decode_results called 45 returned 100% blocks executed 71%
+       45:  230:bool Device::add_button(char* name, decode_results res)
+        -:  231:{
+       45:  232:	if(searchButton(name) == false) /*POSSIBLY CHANGE */
+call    0 returned 100%
+branch  1 taken 89% (fallthrough)
+branch  2 taken 11%
+        -:  233:	{
+       40:  234:		if(but_head == nullptr)
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+        -:  235:		{	
+    #####:  236:			but_head = new Button(name,res,nullptr,nullptr);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+call    4 never executed
+        -:  237:		}	
+        -:  238:		else
+        -:  239:		{
+       40:  240:			but_head->prev = new Button(name,res,but_head,nullptr);
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0% (throw)
+call    3 returned 100%
+       40:  241:			but_head = but_head->prev;
+        -:  242:		}
+       40:  243:		return true;
+        -:  244:	}
+        5:  245:	return false;
+        -:  246:}
+        -:  247:
+        -:  248:
+        -:  249:
+        -:  250:
+        -:  251:
+        -:  252:
